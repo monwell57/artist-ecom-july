@@ -21,13 +21,16 @@ export async function getProductBySlug(slug) {
       "image": image.asset->url,
       "slug": slug.current,
       "extraImages": extraImages[].asset->url,
-      colors
+      colors,
+      sizes
     }`,
-    { slug }
-    ,
-    {next: {
-      revalidate: 1, //revalidate every 30 days
-   }});
+    { slug },
+    {
+      next: {
+        revalidate: 1, //revalidate every 30 days
+      },
+    }
+  );
 
   return product; // Assuming you expect a single product, not an array
 }
@@ -44,11 +47,15 @@ export async function getAllProducts() {
       "image": image.asset->url,
       "slug": slug.current,
       "extraImages": extraImages[].asset->url,
-      colors
+      colors,
+      sizes
     }`,
-    {next: {
-      revalidateTag: 1, //revalidate every hour
-   }});
+    {
+      next: {
+        revalidateTag: 1, //revalidate every hour
+      },
+    }
+  );
 
   return products;
 }
@@ -65,11 +72,11 @@ export async function getProducts() {
       "image": image.asset->url,
       "slug": slug.current,
       "extraImages": extraImages[].asset->url,
-      colors
+      colors,
+      sizes
     }`,
     { next: { revalidateTag: 1 } } // revalidate every hour
   );
 
   return products;
 }
-

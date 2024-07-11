@@ -1,7 +1,9 @@
 //this file communicates only with the sanity studio admin you will need another one for connecting to sanity through the api with groq
 import { defineConfig } from "sanity";
-import { deskTool } from "sanity/desk";
+import { visionTool } from "@sanity/vision";
+import { media } from "sanity-plugin-media";
 import schemas from "./sanity/schemas";
+import { deskTool } from "sanity/desk";
 
 const config = defineConfig({
   projectId: "4hglk3si",
@@ -9,7 +11,7 @@ const config = defineConfig({
   title: "udemy-shop",
   apiVersion: "2023-11-21",
   basePath: "/admin",
-  plugins: [deskTool()],
+  plugins: [deskTool(), visionTool(), media()],
   schema: { types: schemas },
 });
 

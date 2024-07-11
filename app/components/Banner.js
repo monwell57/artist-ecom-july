@@ -1,25 +1,46 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { fetchBannerImage } from "../../sanity/banner-util";
+import { fetchBannerTextData } from "../../sanity/bannerText-util";
 
-function Banner() {
+export default async function Banner() {
+  const bannerImage = await fetchBannerImage();
+  const bannerText = await fetchBannerTextData();
+
+  if (!bannerImage) {
+    return <div>No banner image found</div>;
+  }
   return (
     <div>
-      <section className="bg-white dark:bg-gray-900">
-        <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-          <div className="mr-auto place-self-center lg:col-span-7">
+      <section className="relative bg-white dark:bg-gray-900">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={bannerImage.image.asset.url}
+            alt={bannerImage.image.altText}
+            width={2400} // Adjust width as needed
+            height={1600} // Adjust height as needed
+          />
+        </div>
+
+        <div className="relative grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+          <div className="mr-auto place-self-center lg:col-span-7 bg-white bg-opacity-10 p-6 rounded-lg">
             <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-              Discover Tech Wonders at GadgetGrove!
+              {bannerText.title}
             </h1>
-            <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
-              From innovative gadgets to cutting-edge tech, GadgetGrove is your
-              gateway to the future of technology. Explore Now or speak to our
-              tech experts.
+            <p className="max-w-2xl mb-6 font-light text-gray-700 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-300">
+              {bannerText.description}
             </p>
+          </div>
+        </div>
+
+        <div className="relative grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-4 lg:grid-cols-12">
+          <div className="lg:col-span-7 flex flex-col items-start space-y-4">
             <Link
               href="/products"
-              className="bg-black inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
+              className="bg-black inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
             >
-              Get started
+              All Items
               <svg
                 className="w-5 h-5 ml-2 -mr-1"
                 fill="currentColor"
@@ -37,7 +58,7 @@ function Banner() {
               href="/contact"
               className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
             >
-              Speak to Sales
+              Contact Us
             </Link>
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
@@ -51,5 +72,3 @@ function Banner() {
     </div>
   );
 }
-
-export default Banner;
