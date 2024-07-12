@@ -113,7 +113,7 @@ function Cart() {
       {/* Total Section */}
       <div className="mt-4 text-[#5B20B6] ml-auto">
         <p className="text-lg font-semibold text-right mr-4">
-          Total: ${cartTotal}
+          Total: ${cartTotal.toFixed(2)}
         </p>
       </div>
 

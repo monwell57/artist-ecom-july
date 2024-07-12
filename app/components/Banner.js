@@ -23,6 +23,7 @@ export default async function Banner() {
             objectFit="cover"
             objectPosition="center"
             className="h-full w-full object-cover"
+            priority
           />
         </div>
 

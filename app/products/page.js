@@ -7,7 +7,8 @@ import { getAllProducts } from "@/sanity/product-util";
 
 function Products() {
   const [data, setData] = useState([]);
-  const [minPrice, setMinPrice] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+  const [maxPrice, setMaxPrice] = useState("");
   const [sortBy, setSortBy] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(5);
@@ -17,6 +18,7 @@ function Products() {
     const fetchData = async () => {
       const products = await getAllProducts();
       setData(products);
+      setFilteredData(products);
     };
     fetchData();
   }, []);
@@ -24,7 +26,7 @@ function Products() {
   const applyFilters = () => {
     const filteredProducts = data.filter((product) => {
       const price = parseFloat(product.price); // assuming price is a string
-      const isMinPriceValid = !minPrice || price >= parseFloat(minPrice);
+      const isMaxPriceValid = !maxPrice || price <= parseFloat(maxPrice);
 
       const matchesSearchQuery =
         !searchQuery ||
@@ -33,7 +35,7 @@ function Products() {
         // For example: product.description.toLowerCase().includes(searchQuery.toLowerCase())
         false;
 
-      return isMinPriceValid && matchesSearchQuery;
+      return isMaxPriceValid && matchesSearchQuery;
     });
 
     const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -49,15 +51,15 @@ function Products() {
       return 0;
     });
 
-    setData(sortedProducts);
+    setFilteredData(sortedProducts);
   };
 
   useEffect(() => {
     applyFilters();
-  }, [minPrice, sortBy, searchQuery]);
+  }, [maxPrice, sortBy, searchQuery]);
 
   const resetFilters = () => {
-    setMinPrice("");
+    setMaxPrice("");
     setSortBy("latest");
     setCurrentPage(1);
     setProductsPerPage(5);
@@ -68,12 +70,16 @@ function Products() {
   const fetchData = async () => {
     const products = await getAllProducts();
     setData(products);
+    setFilteredData(products);
   };
 
   // Logic for displaying current products
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = data.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = filteredData.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -117,13 +123,14 @@ function Products() {
 
             {/* Price Range */}
             <div className="space-y-2">
-              <h2 className="text-lg font-medium">Price Range</h2>
+              <h2 className="text-lg font-medium">Price Limit</h2>
               <div className="flex space-x-2">
                 <input
                   type="number"
-                  placeholder="Min"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
+                  placeholder="Max"
+                  value={maxPrice}
+                  min="0"
+                  onChange={(e) => setMaxPrice(Math.max(0, e.target.value))}
                   className="w-full px-2 py-1 border border-gray-300 rounded-md"
                 />
               </div>
@@ -191,9 +198,10 @@ function Products() {
         </div>
 
         <p className="text-sm text-gray-700">
-          {data.length > productsPerPage && (
+          {filteredData.length > productsPerPage && (
             <>
-              page {currentPage} of {Math.ceil(data.length / productsPerPage)}
+              page {currentPage} of{" "}
+              {Math.ceil(filteredData.length / productsPerPage)}
             </>
           )}
         </p>
@@ -208,10 +216,10 @@ function Products() {
 
       {/* Pagination */}
       <div className="mt-4">
-        {data.length > productsPerPage && (
+        {filteredData.length > productsPerPage && (
           <ul className="flex list-none justify-center space-x-2">
             {Array.from(
-              { length: Math.ceil(data.length / productsPerPage) },
+              { length: Math.ceil(filteredData.length / productsPerPage) },
               (_, index) => (
                 <li key={index} className="cursor-pointer">
                   <a
@@ -226,8 +234,6 @@ function Products() {
           </ul>
         )}
       </div>
-
-      <Footer />
     </div>
   );
 }

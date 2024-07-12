@@ -122,6 +122,7 @@ function Details({ product }) {
               value={qty}
               onChange={(e) => setQty(e.target.value)}
               className="w-20 px-4 h-10 border border-gray-300 rounded-md"
+              min={0}
             />
           </div>
 
