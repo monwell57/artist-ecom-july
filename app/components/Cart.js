@@ -9,6 +9,8 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { createOrder } from "@/sanity/order-util";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Cart() {
   const cart = useCartStore((state) => state.cart);
@@ -43,8 +45,16 @@ function Cart() {
     removeFromCart(productId);
   };
 
-  //
+  const validateShippingDetails = () => {
+    return Object.values(shippingAddress).every((field) => field.trim() !== "");
+  };
+
   const onSubmit = async () => {
+    if (!validateShippingDetails()) {
+      toast.error("Please fill out all shipping details.");
+      return;
+    }
+
     const cardElement = elements?.getElement("card");
     setLoading(true);
 
@@ -86,6 +96,7 @@ function Cart() {
 
   return (
     <div className="max-w-3xl mx-auto mt-20">
+      <ToastContainer />
       <h1 className="text-3xl text-center font-semibold text-[#5B20B6] mb-6">
         {totalItems} items in Cart
       </h1>
@@ -147,59 +158,65 @@ function Cart() {
       <div className="mt-6 text-[#5B20B6] max-w-sm mx-auto space-y-4">
         {cartTotal > 0 && (
           <>
-            <div>
-              <label>
+            <div className="grid gap-4">
+              <label className="block">
                 Street:
                 <input
                   type="text"
                   name="street"
                   value={shippingAddress.street}
                   onChange={handleAddressChange}
+                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 />
               </label>
-              <label>
+              <label className="block">
                 City:
                 <input
                   type="text"
                   name="city"
                   value={shippingAddress.city}
                   onChange={handleAddressChange}
+                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 />
               </label>
-              <label>
+              <label className="block">
                 State:
                 <input
                   type="text"
                   name="state"
                   value={shippingAddress.state}
                   onChange={handleAddressChange}
+                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 />
               </label>
-              <label>
+              <label className="block">
                 Postal Code:
                 <input
                   type="text"
                   name="postalCode"
                   value={shippingAddress.postalCode}
                   onChange={handleAddressChange}
+                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 />
               </label>
-              <label>
+              <label className="block">
                 Country:
                 <input
                   type="text"
                   name="country"
                   value={shippingAddress.country}
                   onChange={handleAddressChange}
+                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 />
               </label>
-              <label>
+              <label className="block">
                 Phone:
                 <input
                   type="text"
                   name="phone"
                   value={shippingAddress.phone}
                   onChange={handleAddressChange}
+                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 />
               </label>
             </div>
