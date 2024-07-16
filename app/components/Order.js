@@ -16,8 +16,8 @@ export default async function Order() {
       <h1 className="text-3xl text-center font-semibold text-[#5B20B6] mb-6">
         Your Order History
       </h1>
-      <p className="font-bold text-xs text-gray-500 text-center">
-        Refresh The Page After 2 Mins For{" "}
+      <p className="font-bold text-lg text-gray-500 text-center">
+        <span className="text-red-500"> Refresh</span> The Page After 2 Mins For{" "}
         <span className="text-red-500">New Orders</span> To Appear{" "}
       </p>
 
