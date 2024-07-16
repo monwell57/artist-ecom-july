@@ -11,61 +11,61 @@ const client = createClient({
 
 // Function to get orders by email and sort by the latest
 export async function getOrdersByEmail(email) {
-    try {
-      // Query orders from Sanity with a GROQ query
-      const orders = await client.fetch(
-        `*[_type == 'order' && email == $email] | order(createdAt desc)`,
-        { email },
-        {next: {
+  try {
+    // Query orders from Sanity with a GROQ query
+    const orders = await client.fetch(
+      `*[_type == 'order' && email == $email] | order(createdAt desc)`,
+      { email },
+      {
+        next: {
           revalidate: 1, //revalidate every 30 days
-       }});
-  
-      // Return the sorted orders
-      return orders;
-    } catch (error) {
-      // Handle errors appropriately
-      console.error('Error getting orders:', error.message);
-      throw new Error('Failed to get orders');
-    }
+        },
+      }
+    );
+
+    // Return the sorted orders
+    return orders;
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error getting orders:", error.message);
+    throw new Error("Failed to get orders");
   }
-  
-  export async function createOrder(email,cart) {
-    console.log(email,cart);
-    try {
-      // Create an array to store the promises for creating each order
-      const orderCreationPromises = [];
-  
-      // Iterate over the orderDataArray and create a promise for each order
-      cart.forEach((orderData) => {
-        // Extract order data
-        const { name, quantity, price,color} = orderData;
-  
-        // Create a promise for creating each order
-        const orderCreationPromise = client.create({
-          _type: 'order',
-          name,
-          qty: quantity,
-          price,
-          color,
-          paid: true,
-          delivered: false,
-          email: email,
-          createdAt: new Date().toISOString(),
-        });
-  
-        // Add the promise to the array
-        orderCreationPromises.push(orderCreationPromise);
+}
+
+//
+export async function createOrder(email, cart, address, phone) {
+  try {
+    console.log("Creating order with address:", address);
+    console.log("Phone:", phone);
+
+    const orderCreationPromises = cart.map((orderData) => {
+      const { name, quantity, price, color } = orderData;
+
+      return client.create({
+        _type: "order",
+        name,
+        qty: quantity,
+        price,
+        color,
+        paid: true,
+        delivered: false,
+        email,
+        shippingAddress: {
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          postalCode: address.postalCode,
+          country: address.country,
+          phone: phone,
+        },
+        createdAt: new Date().toISOString(),
       });
-  
-      // Wait for all order creation promises to resolve
-      const createdOrders = await Promise.all(orderCreationPromises);
-  
-      // Return the created orders
-      return createdOrders;
-    } catch (error) {
-      // Handle errors appropriately
-      console.error('Error creating order:', error.message);
-      throw new Error('Failed to create order');
-    }
+    });
+
+    const createdOrders = await Promise.all(orderCreationPromises);
+    return createdOrders;
+  } catch (error) {
+    console.error("Error creating order:", error.message);
+    throw new Error("Failed to create order");
   }
-  
+}

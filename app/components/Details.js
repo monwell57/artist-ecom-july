@@ -14,15 +14,36 @@ function Details({ product }) {
   const addToCart = useCartStore((state) => state.addToCart);
   const [qty, setQty] = useState(1);
 
+  const [shippingAddress, setShippingAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
+    phone: "",
+  });
+
+  // Update the state when the user inputs data
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setShippingAddress((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  // Add to cart function
   const handleAddToCart = () => {
     addToCart({
       product,
       quantity: qty,
       color: selectedColor,
       size: selectedSize,
+      shippingAddress, // Include shippingAddress in addToCart function
     });
     toast.success("Added to cart");
   };
+  console.log(shippingAddress);
 
   return (
     <div className="max-w-7xl mx-auto mt-20">
@@ -177,6 +198,68 @@ function Details({ product }) {
           ))}
         </ul>
       </div>
+      <form className="flex flex-col justify-center items-baseline">
+        <label className="ml-2 mt-10 md:mr-5" htmlFor="street">
+          Street
+        </label>
+        <input
+          type="text"
+          name="street"
+          value={shippingAddress.street}
+          onChange={handleAddressChange}
+          className="w-4/5 mt-5 px-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-400"
+        />
+        <label className="ml-2 mt-10 md:mr-5" htmlFor="city">
+          City
+        </label>
+        <input
+          type="text"
+          name="city"
+          value={shippingAddress.city}
+          onChange={handleAddressChange}
+          className="w-4/5 md:w-2/5 mt-5 px-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-400"
+        />
+        <label className="ml-2 mt-10 md:mr-5" htmlFor="state">
+          State
+        </label>
+        <input
+          type="text"
+          name="state"
+          value={shippingAddress.state}
+          onChange={handleAddressChange}
+          className="w-4/5 md:w-2/5 mt-5 px-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-400"
+        />
+        <label className="ml-2 mt-10 md:mr-5" htmlFor="postalCode">
+          Postal Code
+        </label>
+        <input
+          type="text"
+          name="postalCode"
+          value={shippingAddress.postalCode}
+          onChange={handleAddressChange}
+          className="w-4/5 md:w-2/5 mt-5 px-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-400"
+        />
+        <label className="ml-2 mt-10 md:mr-5" htmlFor="country">
+          Country
+        </label>
+        <input
+          type="text"
+          name="country"
+          value={shippingAddress.country}
+          onChange={handleAddressChange}
+          className="w-4/5 md:w-2/5 mt-5 px-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-400"
+        />
+        <label className="ml-2 mr-4 mt-10" htmlFor="phone">
+          Phone
+        </label>
+        <input
+          type="tel"
+          name="phone"
+          value={shippingAddress.phone}
+          onChange={handleAddressChange}
+          className="w-3/5 md:w-1/5 mt-5 px-4 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-400"
+        />
+      </form>
     </div>
   );
 }

@@ -1,34 +1,49 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import useCartStore from "../../cartStore";
 import Link from "next/link";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-// import { useRouter } from "next/navigation";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { createOrder } from "@/sanity/order-util";
 
 function Cart() {
   const cart = useCartStore((state) => state.cart);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
   const totalItems = useCartStore((state) => state.totalItems);
   const cartTotal = useCartStore((state) => state.cartTotal);
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
-  console.log(cart);
-
   const stripe = useStripe();
   const elements = useElements();
+
+  const [shippingAddress, setShippingAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
+    phone: "",
+  });
+
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setShippingAddress((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleRemoveFromCart = (productId) => {
     removeFromCart(productId);
   };
 
+  //
   const onSubmit = async () => {
     const cardElement = elements?.getElement("card");
     setLoading(true);
@@ -39,19 +54,25 @@ function Cart() {
         data: { amount: cartTotal.toFixed(0) },
       });
 
-      console.log(data);
       const res = await stripe?.confirmCardPayment(data?.data?.intent, {
         payment_method: { card: cardElement },
       });
-      //console.log(res.paymentIntent.status);
+
       const status = res?.paymentIntent?.status;
       if (status === "succeeded") {
         setLoading(false);
-        // toast.success("Payment Successful");
         const email = user?.emailAddresses[0]?.emailAddress;
 
         if (email) {
-          const res = await createOrder(email, cart);
+          console.log("Shipping Address:", shippingAddress); // Add this line to debug
+          console.log("Phone:", shippingAddress.phone); // Add this line to debug
+
+          const res = await createOrder(
+            email,
+            cart,
+            shippingAddress,
+            shippingAddress.phone
+          );
           if (res) {
             router.push("/order");
           }
@@ -60,7 +81,6 @@ function Cart() {
     } catch (error) {
       setLoading(false);
       console.log(error);
-      // toast.error("Payment Failed");
     }
   };
 
@@ -110,7 +130,6 @@ function Cart() {
         </tbody>
       </table>
 
-      {/* Total Section */}
       <div className="mt-4 text-[#5B20B6] ml-auto">
         <p className="text-lg font-semibold text-right mr-4">
           Total: ${cartTotal.toFixed(2)}
@@ -128,10 +147,66 @@ function Cart() {
       <div className="mt-6 text-[#5B20B6] max-w-sm mx-auto space-y-4">
         {cartTotal > 0 && (
           <>
+            <div>
+              <label>
+                Street:
+                <input
+                  type="text"
+                  name="street"
+                  value={shippingAddress.street}
+                  onChange={handleAddressChange}
+                />
+              </label>
+              <label>
+                City:
+                <input
+                  type="text"
+                  name="city"
+                  value={shippingAddress.city}
+                  onChange={handleAddressChange}
+                />
+              </label>
+              <label>
+                State:
+                <input
+                  type="text"
+                  name="state"
+                  value={shippingAddress.state}
+                  onChange={handleAddressChange}
+                />
+              </label>
+              <label>
+                Postal Code:
+                <input
+                  type="text"
+                  name="postalCode"
+                  value={shippingAddress.postalCode}
+                  onChange={handleAddressChange}
+                />
+              </label>
+              <label>
+                Country:
+                <input
+                  type="text"
+                  name="country"
+                  value={shippingAddress.country}
+                  onChange={handleAddressChange}
+                />
+              </label>
+              <label>
+                Phone:
+                <input
+                  type="text"
+                  name="phone"
+                  value={shippingAddress.phone}
+                  onChange={handleAddressChange}
+                />
+              </label>
+            </div>
             <button
               disabled={cartTotal === 0}
               onClick={onSubmit}
-              className="text-lg w-full font-semibold text-center mr-4 bg-[#5B20B6]  text-white py-2 px-4 rounded hover:text-[#5B20B6] hover:bg-white border border-[#5B20B6]"
+              className="text-lg w-full font-semibold text-center mr-4 bg-[#5B20B6] text-white py-2 px-4 rounded hover:text-[#5B20B6] hover:bg-white border border-[#5B20B6]"
             >
               {loading ? "Loading..." : "Pay"}
             </button>
@@ -139,9 +214,7 @@ function Cart() {
         )}
 
         <button className="text-lg w-full font-semibold text-center mr-4 bg-white hover:bg-[#5B20B6] hover:text-white text-[#5B20B6] border border-[#5B20B6] py-2 px-4 rounded">
-          <Link className="" href="/">
-            Back to Shopping
-          </Link>
+          <Link href="/">Back to Shopping</Link>
         </button>
       </div>
     </div>
