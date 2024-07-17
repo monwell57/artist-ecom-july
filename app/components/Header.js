@@ -32,7 +32,7 @@ function Header() {
             <MdLocalShipping className="text-3xl text-[#5B20B6] cursor-pointer hover:scale-125 transition-transform duration-300 align-middle" />
           </Link>
 
-          <a href="https://april-music-app-blog-vxmk-i1xg381ws-monwell57s-projects.vercel.app/">
+          <a href="https://final-artist-ecom-d2uolegzr-monwell57s-projects.vercel.app/">
             <FaHome className="text-3xl text-[#5B20B6] cursor-pointer hover:scale-125 transition-transform duration-300 ml-3 align-middle" />
           </a>
 
