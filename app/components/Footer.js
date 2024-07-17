@@ -1,10 +1,12 @@
+// components/Footer.js
+
 import Link from "next/link";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 function Footer() {
   return (
-    <footer className="bg-[#5B20B6] text-white py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="bg-[#5B20B6] text-white py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         <div className="flex flex-wrap justify-between">
           {/* About Section */}
           <div className="w-full sm:w-1/2 md:w-1/4 mb-6 sm:mb-0">
@@ -32,7 +34,6 @@ function Footer() {
                   Home
                 </a>
               </li>
-
               <li>
                 <Link href="/faq" className="hover:text-gray-300">
                   FAQ
@@ -48,8 +49,6 @@ function Footer() {
             <p className="text-sm">Phone: +1 234 567 890</p>
             <p className="text-sm">Address: 123 Music Lane, New York, NY</p>
           </div>
-
-          {/* Subscribe */}
         </div>
 
         {/* Social Media */}

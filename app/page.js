@@ -1,3 +1,4 @@
+// pages/index.js
 import React from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -18,7 +19,7 @@ export default async function Home() {
     <div>
       <Header />
 
-      <div className="flex flex-col items-center justify-center mt-10 space-y-4">
+      <div className="flex flex-col items-center justify-center mt-10 space-y-4 w-full">
         <Banner />
       </div>
 
